@@ -2,7 +2,7 @@ const { DateTime } = require('luxon');
 const database = require("../infra/database");
 const Task = require("../models/taskModel");
 const date = DateTime.now().toFormat('dd/MM/yyyy HH:mm:ss');
-
+const status = "pendente";
 
 class tarefasRepositories {
 
@@ -10,10 +10,11 @@ class tarefasRepositories {
         return database;
     }
 
-    createTask( titulo_tarefa, descricao_tarefa, prazo, status ){
+    createTask( titulo_tarefa, descricao_tarefa, prazo){
         let id = database.length + 1 ;
         const newTask = new Task(id, date, titulo_tarefa, descricao_tarefa, prazo, status);
         database.push(newTask);
+        return database;
     }
 
     findById(id){
@@ -26,7 +27,7 @@ class tarefasRepositories {
             tarefa.status = "concluida"
             tarefa.data_conclusao = date;
         }else{
-            console.log('deu não')
+            console.log('erro no mark done task/ repositories')
         };
     }
 
@@ -36,8 +37,32 @@ class tarefasRepositories {
             tarefa.status = "pendente"
             delete tarefa.data_conclusao;
         }else{
-            console.log('deu não')
+            console.log('erro no unmark done task/ repositories')
         };
+    }
+
+    filterDoneTasks(){
+        let concluidas = [];
+
+        database.forEach(( task ) =>{
+            if( task.status === "concluida"){
+                concluidas.push(task)
+            }
+        })
+        return concluidas
+
+    }
+
+    filterUnDoneTasks(){
+        let pendentes = [];
+
+        database.forEach(( task ) =>{
+            if( task.status === "pendente"){
+                pendentes.push(task)
+            }
+        })
+        return pendentes
+
     }
 
 
